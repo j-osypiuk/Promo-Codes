@@ -40,12 +40,21 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, UUID>> updateProductById(@PathVariable("id") UUID productId,
                                                                @Valid @RequestBody ProductInputDto productInputDto) {
-
         Product product = productService
                 .updateProductById(productId, ProductDtoMapper.mapProductInputDtoToProduct(productInputDto));
 
         return new ResponseEntity<>(
                 Map.of("productId", product.getProductId()),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping(value = "/{id}", params = {"code"})
+    public ResponseEntity<Map<String, String>> getProductDiscountPrice(@PathVariable("id") UUID productId,
+                                                                       @RequestParam("code") String code) {
+
+        return new ResponseEntity<>(
+                productService.getProductDiscountPrice(productId, code),
                 HttpStatus.OK
         );
     }
