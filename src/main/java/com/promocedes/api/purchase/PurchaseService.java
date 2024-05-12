@@ -26,16 +26,22 @@ public class PurchaseService {
         Product productDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + " does not exist"));
 
-        PromoCode promoCodeDB = promoCodeRepository.findById(code)
-                .orElseThrow(() -> new ObjectNotFoundException("Promo code: '" + code + "' does not exists"));
+        Map<String, String> discountMap;
+        double discount = 0;
 
-        Map<String, String> discount = productService.getProductDiscountPrice(productId, code);
+        if (code != null) {
+            promoCodeRepository.findById(code)
+                    .orElseThrow(() -> new ObjectNotFoundException("Promo code: '" + code + "' does not exists"));
 
+            discountMap = productService.getProductDiscountPrice(productId, code);
+            discount = productDB.getPrice() - Double.parseDouble(discountMap.get("discountPrice"));
+        }
+        
         Purchase purchase = Purchase.builder()
                 .product(productDB)
                 .regularPrice(productDB.getPrice())
                 .timestamp(LocalDateTime.now())
-                .discount(productDB.getPrice() - Double.parseDouble(discount.get("discountPrice")))
+                .discount(discount)
                 .build();
 
         purchaseRepository.save(purchase);
