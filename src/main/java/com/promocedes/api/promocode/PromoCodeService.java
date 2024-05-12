@@ -1,5 +1,7 @@
 package com.promocedes.api.promocode;
 
+import com.promocedes.api.exception.DuplicateUniqueValueException;
+import com.promocedes.api.exception.ObjectNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ public class PromoCodeService {
 
     public PromoCode addPromoCode(PromoCode promoCode) {
         if (promoCodeRepository.findById(promoCode.getCode()).isPresent())
-            throw new RuntimeException("Given promo code already exists");
+            throw new DuplicateUniqueValueException("Given promo code already exists");
 
         return promoCodeRepository.save(promoCode);
     }
@@ -24,6 +26,6 @@ public class PromoCodeService {
 
     public PromoCode getPromoCode(String code) {
         return promoCodeRepository.findById(code)
-                .orElseThrow(() -> new RuntimeException("Promo code: '" + code + "' does not exists"));
+                .orElseThrow(() -> new ObjectNotFoundException("Promo code: '" + code + "' does not exists"));
     }
 }
