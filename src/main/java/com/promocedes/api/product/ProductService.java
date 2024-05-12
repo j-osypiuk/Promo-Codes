@@ -2,6 +2,7 @@ package com.promocedes.api.product;
 
 import com.promocedes.api.exception.DuplicateUniqueValueException;
 import com.promocedes.api.exception.ObjectNotFoundException;
+import com.promocedes.api.promocode.CodeType;
 import com.promocedes.api.promocode.PromoCode;
 import com.promocedes.api.promocode.PromoCodeRepository;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,7 @@ public class ProductService {
 
     public Product updateProductById(UUID productId, Product product) {
         Product productDB = productRepository.findById(productId)
-                .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + "does not exist"));
+                .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + " does not exist"));
 
         if (productRepository.findByName(product.getName()).isPresent())
             throw new DuplicateUniqueValueException("Product with given name already exists");
@@ -48,7 +49,7 @@ public class ProductService {
 
     public Map<String, String> getProductDiscountPrice(UUID productId, String code) {
         Product productDB = productRepository.findById(productId)
-                .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + "does not exist"));
+                .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + " does not exist"));
 
         PromoCode promoCodeDB = promoCodeRepository.findById(code)
                 .orElseThrow(() -> new ObjectNotFoundException("Promo code: '" + code + "' does not exists"));
@@ -73,7 +74,12 @@ public class ProductService {
             return discountPriceMap;
         }
 
-        double discountPrice = productDB.getPrice() - promoCodeDB.getAmount();
+        double discountPrice;
+
+        if (promoCodeDB.getCodeType() == CodeType.QUANTITATIVE)
+            discountPrice = productDB.getPrice() - promoCodeDB.getAmount();
+        else
+            discountPrice = productDB.getPrice() - productDB.getPrice() * (promoCodeDB.getAmount() / 100);
 
         if (discountPrice < 0)
             discountPrice = 0;

@@ -1,5 +1,6 @@
 package com.promocedes.api.product;
 
+import com.promocedes.api.promocode.CodeType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,9 +15,7 @@ import java.util.UUID;
 public class Product {
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.UUID
-    )
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID productId;
     @Column(
             nullable = false,
@@ -25,8 +24,6 @@ public class Product {
     private String name;
     private String description;
     private double price;
-    @Column(
-            nullable = false
-    )
+    @Column(nullable = false)
     private String currency;
 }

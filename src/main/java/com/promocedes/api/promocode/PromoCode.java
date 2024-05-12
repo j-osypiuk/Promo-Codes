@@ -1,8 +1,6 @@
 package com.promocedes.api.promocode;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,15 +15,14 @@ public class PromoCode {
 
     @Id
     private String code;
-    @Column(
-            nullable = false
-    )
+    @Column(nullable = false)
     private LocalDate expireDate;
     private long maxUsages;
     private long totalUsages;
     private double amount;
-    @Column(
-            nullable = false
-    )
+    @Column(nullable = false)
     private String currency;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CodeType codeType;
 }

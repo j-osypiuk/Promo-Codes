@@ -12,6 +12,7 @@ public class PromoCodeDtoMapper {
                 .totalUsages(0)
                 .amount(promoCodeInputDto.amount())
                 .currency(promoCodeInputDto.currency())
+                .codeType(promoCodeInputDto.codeType())
                 .build();
     }
 }

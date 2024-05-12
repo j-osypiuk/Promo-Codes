@@ -1,5 +1,8 @@
 package com.promocedes.api.promocode.dto;
 
+import com.promocedes.api.promocode.CodeType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +31,8 @@ public record PromoCodeInputDto(
                 max = 3,
                 message = "Promo code must discount currency must be a 3 characters long text"
         )
-        String currency
+        String currency,
+        @NotNull(message = "Code type must have a value 'QUANTITATIVE' or 'PERCENTAGE'")
+        CodeType codeType
 ) {
 }
