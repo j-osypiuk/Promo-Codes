@@ -43,8 +43,9 @@ public class ProductService {
         Product productDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + " does not exist"));
 
-        if (productRepository.findByName(product.getName()).isPresent())
-            throw new DuplicateUniqueValueException("Product with given name already exists");
+        if (!product.getName().equals(productDB.getName()))
+            if (productRepository.findByName(product.getName()).isPresent())
+                throw new DuplicateUniqueValueException("Product with given name already exists");
 
         productDB.setName(product.getName());
         productDB.setDescription(product.getDescription());
