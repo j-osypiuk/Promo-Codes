@@ -3,20 +3,19 @@ package com.promocedes.api.promocode.dto;
 import com.promocedes.api.promocode.CodeType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
+import java.util.Currency;
 
 public record PromoCodeInputDto(
 
-        @Length(
-                min = 3,
-                max = 24,
-                message = "Promo code must be a text with 3-24 alphanumeric case-sensitive characters"
+        @NotBlank(message = "Promo code cannot be blank")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9]{3,24}$",
+                message = "Promo code must be a text with 3-24 alphanumeric case-sensitive characters which must not " +
+                        "contain whitespaces"
         )
         String code,
         @NotNull(message = "Promo code expiration date cannot be blank")
@@ -26,10 +25,10 @@ public record PromoCodeInputDto(
         long maxUsages,
         @Positive(message = "Amount of discount promo code must be a positive number")
         double amount,
-        @Length(
-                min = 3,
-                max = 3,
-                message = "Promo code must discount currency must be a 3 characters long text"
+        @NotBlank(message = "Promo code currency cannot be blank")
+        @Pattern(
+                regexp = "^[A-Z]{3}$",
+                message = "Promo code currency must match ISO 4217 currency code"
         )
         String currency,
         @NotNull(message = "Code type must have a value 'QUANTITATIVE' or 'PERCENTAGE'")
