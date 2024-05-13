@@ -6,7 +6,7 @@ import java.text.DecimalFormatSymbols;
 
 public class DecimalFormatter {
 
-    private static final DecimalFormat df = new DecimalFormat(".00");
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public static String formatToTwoDecimalPoints(BigDecimal number) {
         DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
