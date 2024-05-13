@@ -1,6 +1,7 @@
 package com.promocedes.api.exception.advice;
 
 import com.promocedes.api.exception.DuplicateUniqueValueException;
+import com.promocedes.api.exception.InvalidValueException;
 import com.promocedes.api.exception.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -31,6 +32,15 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(DuplicateUniqueValueException.class)
     public ProblemDetail handleDuplicateUniqueValue(DuplicateUniqueValueException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, e.getMessage()
+        );
+        problemDetail.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidValueException.class)
+    public ProblemDetail handleDuplicateUniqueValue(InvalidValueException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST, e.getMessage()
         );

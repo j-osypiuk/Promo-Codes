@@ -1,6 +1,7 @@
 package com.promocedes.api.product;
 
 import com.promocedes.api.exception.DuplicateUniqueValueException;
+import com.promocedes.api.exception.InvalidValueException;
 import com.promocedes.api.exception.ObjectNotFoundException;
 import com.promocedes.api.promocode.CodeType;
 import com.promocedes.api.promocode.PromoCode;
@@ -25,6 +26,9 @@ public class ProductService {
     private final PromoCodeRepository promoCodeRepository;
 
     public Product addProduct(Product product) {
+        if (product.getPrice().compareTo(BigDecimal.ZERO) <= 0)
+            throw new InvalidValueException("Product price must be a positive number");
+
         if (productRepository.findByName(product.getName()).isPresent())
             throw new DuplicateUniqueValueException("Product with given name already exists");
 
