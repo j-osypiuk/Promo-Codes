@@ -2,6 +2,7 @@ package com.promocedes.api.product;
 
 import com.promocedes.api.product.dto.ProductDtoMapper;
 import com.promocedes.api.product.dto.ProductInputDto;
+import com.promocedes.api.product.dto.ProductOutputDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,9 +31,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<ProductOutputDto>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+
         return new ResponseEntity<>(
-                productService.getAllProducts(),
+                products.stream().map(ProductDtoMapper::mapProductToProductOutputDto).toList(),
                 HttpStatus.OK
         );
     }

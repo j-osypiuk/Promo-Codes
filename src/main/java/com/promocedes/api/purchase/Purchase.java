@@ -4,6 +4,7 @@ import com.promocedes.api.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,8 +21,10 @@ public class Purchase {
     private UUID purchaseId;
     @Column(nullable = false)
     private LocalDateTime timestamp;
-    private double regularPrice;
-    private double discount;
+    @Column(nullable = false)
+    private BigDecimal regularPrice;
+    @Column(nullable = false)
+    private BigDecimal discount;
     @ManyToOne
     @JoinColumn(
             name = "product_id",

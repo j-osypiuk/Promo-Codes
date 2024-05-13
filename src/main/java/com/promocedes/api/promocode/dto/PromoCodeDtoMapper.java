@@ -1,6 +1,9 @@
 package com.promocedes.api.promocode.dto;
 
 import com.promocedes.api.promocode.PromoCode;
+import com.promocedes.api.utils.DecimalFormatter;
+
+import java.math.BigDecimal;
 
 public class PromoCodeDtoMapper {
 
@@ -10,9 +13,21 @@ public class PromoCodeDtoMapper {
                 .expireDate(promoCodeInputDto.expireDate())
                 .maxUsages(promoCodeInputDto.maxUsages())
                 .totalUsages(0)
-                .amount(promoCodeInputDto.amount())
+                .amount(new BigDecimal(promoCodeInputDto.amount()))
                 .currency(promoCodeInputDto.currency())
                 .codeType(promoCodeInputDto.codeType())
                 .build();
+    }
+
+    public static PromoCodeOutputDto mapPromoCodeToPromoCodeOutputDto(PromoCode promoCode) {
+        return new PromoCodeOutputDto(
+                promoCode.getCode(),
+                promoCode.getExpireDate(),
+                promoCode.getMaxUsages(),
+                promoCode.getTotalUsages(),
+                DecimalFormatter.formatToTwoDecimalPoints(promoCode.getAmount()),
+                promoCode.getCurrency(),
+                promoCode.getCodeType()
+        );
     }
 }

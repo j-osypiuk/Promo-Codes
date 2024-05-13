@@ -9,8 +9,12 @@ public record ProductInputDto(
         @NotBlank(message = "Product name cannot be blank")
         String name,
         String description,
-        @Positive(message = "Product price must be a positive number")
-        double price,
+        @NotBlank(message = "Product price must be a positive number with two decimal points")
+        @Pattern(
+                regexp = "^[0-9]*[.]{1}[0-9]{2}$",
+                message = "Product price must be a positive number with two decimal points"
+        )
+        String price,
         @NotBlank(message = "Product price currency cannot be blank")
         @Pattern(
                 regexp = "^[A-Z]{3}$",

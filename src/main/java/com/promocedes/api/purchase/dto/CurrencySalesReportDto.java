@@ -1,9 +1,9 @@
 package com.promocedes.api.purchase.dto;
 
-public record CurrencySalesReport(
+public record CurrencySalesReportDto(
         String currency,
-        double totalAmount,
-        double totalDiscount,
+        String totalAmount,
+        String totalDiscount,
         long noOfPurchases
 ) {
 }

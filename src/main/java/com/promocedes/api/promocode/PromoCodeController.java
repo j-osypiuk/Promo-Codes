@@ -2,6 +2,7 @@ package com.promocedes.api.promocode;
 
 import com.promocedes.api.promocode.dto.PromoCodeDtoMapper;
 import com.promocedes.api.promocode.dto.PromoCodeInputDto;
+import com.promocedes.api.promocode.dto.PromoCodeOutputDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,19 +31,21 @@ public class PromoCodeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PromoCode>> getAllPromoCodes() {
+    public ResponseEntity<List<PromoCodeOutputDto>> getAllPromoCodes() {
         List<PromoCode> promoCodes = promoCodeService.getAllPromoCodes();
 
         return new ResponseEntity<>(
-                promoCodes,
+                promoCodes.stream().map(PromoCodeDtoMapper::mapPromoCodeToPromoCodeOutputDto).toList(),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/{code}")
-    public ResponseEntity<PromoCode> getPromoCode(@PathVariable("code") String code) {
+    public ResponseEntity<PromoCodeOutputDto> getPromoCode(@PathVariable("code") String code) {
+        PromoCode promoCode = promoCodeService.getPromoCode(code);
+
         return new ResponseEntity<>(
-                promoCodeService.getPromoCode(code),
+                PromoCodeDtoMapper.mapPromoCodeToPromoCodeOutputDto(promoCode),
                 HttpStatus.OK
         );
     }

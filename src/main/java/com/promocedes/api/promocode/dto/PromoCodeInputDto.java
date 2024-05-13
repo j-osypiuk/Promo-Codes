@@ -1,13 +1,9 @@
 package com.promocedes.api.promocode.dto;
 
 import com.promocedes.api.promocode.CodeType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
-import java.util.Currency;
 
 public record PromoCodeInputDto(
 
@@ -23,8 +19,12 @@ public record PromoCodeInputDto(
         LocalDate expireDate,
         @Positive(message = "Max amount of usages of promo code must be a positive number")
         long maxUsages,
-        @Positive(message = "Amount of discount promo code must be a positive number")
-        double amount,
+        @NotBlank(message = "Amount of discount promo code must be a positive number with two decimal points")
+        @Pattern(
+                regexp = "^[0-9]*[.]{1}[0-9]{2}$",
+                message = "Amount of discount promo code must be a positive number with two decimal points"
+        )
+        String amount,
         @NotBlank(message = "Promo code currency cannot be blank")
         @Pattern(
                 regexp = "^[A-Z]{3}$",

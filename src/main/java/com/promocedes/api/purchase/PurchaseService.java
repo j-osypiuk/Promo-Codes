@@ -4,11 +4,14 @@ import com.promocedes.api.exception.ObjectNotFoundException;
 import com.promocedes.api.product.Product;
 import com.promocedes.api.product.ProductRepository;
 import com.promocedes.api.product.ProductService;
+import com.promocedes.api.promocode.PromoCode;
 import com.promocedes.api.promocode.PromoCodeRepository;
-import com.promocedes.api.purchase.dto.CurrencySalesReport;
+import com.promocedes.api.purchase.dto.CurrencySalesReportDto;
+import com.promocedes.api.utils.DecimalFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +32,17 @@ public class PurchaseService {
                 .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + " does not exist"));
 
         Map<String, String> discountMap;
-        double discount = 0;
+        BigDecimal discount = BigDecimal.ZERO;
 
         if (code != null) {
-            promoCodeRepository.findById(code)
+            PromoCode promoCode = promoCodeRepository.findById(code)
                     .orElseThrow(() -> new ObjectNotFoundException("Promo code: '" + code + "' does not exists"));
 
             discountMap = productService.getProductDiscountPrice(productId, code);
-            discount = productDB.getPrice() - Double.parseDouble(discountMap.get("discountPrice"));
+            discount = productDB.getPrice().subtract(new BigDecimal(discountMap.get("discountPrice")));
+
+            promoCode.setTotalUsages(promoCode.getTotalUsages() + 1);
+            promoCodeRepository.save(promoCode);
         }
 
         Purchase purchase = Purchase.builder()
@@ -49,29 +55,36 @@ public class PurchaseService {
         purchaseRepository.save(purchase);
     }
 
-    public List<CurrencySalesReport> getPurchaseReport() {
+    public List<CurrencySalesReportDto> getPurchaseReport() {
         List<Purchase> purchases = purchaseRepository.findAll();
 
         List<String> currencies = purchases.stream().map(p -> p.getProduct().getCurrency()).distinct().toList();
 
-        List<CurrencySalesReport> currencySalesReports = new ArrayList<>();
+        List<CurrencySalesReportDto> currencySalesReportDtos = new ArrayList<>();
 
         for (String c : currencies) {
             List<Purchase> currencyPurchases = purchases.stream()
                     .filter(p -> p.getProduct().getCurrency().equals(c))
                     .toList();
 
-            double totalAmount = 0;
-            double totalDiscount = 0;
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalDiscount = BigDecimal.ZERO;
 
             for (Purchase p : currencyPurchases) {
-                totalAmount += p.getRegularPrice() - p.getDiscount();
-                totalDiscount += p.getDiscount();
+                totalAmount = totalAmount.add(p.getRegularPrice().subtract(p.getDiscount()));
+                totalDiscount = totalDiscount.add(p.getDiscount());
             }
 
-            currencySalesReports.add(new CurrencySalesReport(c, totalAmount, totalDiscount, currencyPurchases.size()));
+            currencySalesReportDtos.add(
+                    new CurrencySalesReportDto(
+                            c,
+                            DecimalFormatter.formatToTwoDecimalPoints(totalAmount),
+                            DecimalFormatter.formatToTwoDecimalPoints(totalDiscount),
+                            currencyPurchases.size()
+                    )
+            );
         }
 
-        return currencySalesReports;
+        return currencySalesReportDtos;
     }
 }

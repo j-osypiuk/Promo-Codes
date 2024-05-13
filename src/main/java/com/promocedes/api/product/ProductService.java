@@ -5,9 +5,12 @@ import com.promocedes.api.exception.ObjectNotFoundException;
 import com.promocedes.api.promocode.CodeType;
 import com.promocedes.api.promocode.PromoCode;
 import com.promocedes.api.promocode.PromoCodeRepository;
+import com.promocedes.api.utils.DecimalFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -74,17 +77,18 @@ public class ProductService {
             return discountPriceMap;
         }
 
-        double discountPrice;
+        BigDecimal discountPrice;
 
         if (promoCodeDB.getCodeType() == CodeType.QUANTITATIVE)
-            discountPrice = productDB.getPrice() - promoCodeDB.getAmount();
+            discountPrice = productDB.getPrice().subtract(promoCodeDB.getAmount());
         else
-            discountPrice = productDB.getPrice() - productDB.getPrice() * (promoCodeDB.getAmount() / 100);
+            discountPrice = productDB.getPrice().subtract(productDB.getPrice()
+                    .multiply(promoCodeDB.getAmount().divide(new BigDecimal(("100.00")), RoundingMode.HALF_UP)));
 
-        if (discountPrice < 0)
-            discountPrice = 0;
+        if (discountPrice.compareTo(BigDecimal.ZERO) < 0)
+            discountPrice = BigDecimal.ZERO;
 
-        discountPriceMap.put("discountPrice", "" + discountPrice);
+        discountPriceMap.put("discountPrice", DecimalFormatter.formatToTwoDecimalPoints(discountPrice));
 
         return discountPriceMap;
     }

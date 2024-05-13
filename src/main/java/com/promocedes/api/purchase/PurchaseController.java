@@ -1,6 +1,6 @@
 package com.promocedes.api.purchase;
 
-import com.promocedes.api.purchase.dto.CurrencySalesReport;
+import com.promocedes.api.purchase.dto.CurrencySalesReportDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class PurchaseController {
     }
 
     @GetMapping("/report")
-    public ResponseEntity<List<CurrencySalesReport>> getPurchaseReport() {
+    public ResponseEntity<List<CurrencySalesReportDto>> getPurchaseReport() {
         return new ResponseEntity<>(
             purchaseService.getPurchaseReport(),
             HttpStatus.OK

@@ -3,6 +3,7 @@ package com.promocedes.api.promocode;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -19,7 +20,8 @@ public class PromoCode {
     private LocalDate expireDate;
     private long maxUsages;
     private long totalUsages;
-    private double amount;
+    @Column(nullable = false)
+    private BigDecimal amount;
     @Column(nullable = false)
     private String currency;
     @Column(nullable = false)
