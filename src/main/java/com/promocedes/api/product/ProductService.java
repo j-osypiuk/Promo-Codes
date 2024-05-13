@@ -40,6 +40,9 @@ public class ProductService {
     }
 
     public Product updateProductById(UUID productId, Product product) {
+        if (product.getPrice().compareTo(BigDecimal.ZERO) <= 0)
+            throw new InvalidValueException("Product price must be a positive number");
+
         Product productDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ObjectNotFoundException("Product with id = " + productId + " does not exist"));
 
