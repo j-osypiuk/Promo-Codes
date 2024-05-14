@@ -39,10 +39,12 @@ public class PurchaseService {
                     .orElseThrow(() -> new ObjectNotFoundException("Promo code: '" + code + "' does not exists"));
 
             discountMap = productService.getProductDiscountPrice(productId, code);
-            discount = productDB.getPrice().subtract(new BigDecimal(discountMap.get("discountPrice")));
 
-            promoCode.setTotalUsages(promoCode.getTotalUsages() + 1);
-            promoCodeRepository.save(promoCode);
+            if (discountMap.get("warning") == null) {
+                discount = productDB.getPrice().subtract(new BigDecimal(discountMap.get("discountPrice")));
+                promoCode.setTotalUsages(promoCode.getTotalUsages() + 1);
+                promoCodeRepository.save(promoCode);
+            }
         }
 
         Purchase purchase = Purchase.builder()
